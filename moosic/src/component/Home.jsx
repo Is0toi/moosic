@@ -1,11 +1,13 @@
 import React from 'react'
 
 function Home() {
-  return (
-    <div className = "Title">
-      <h1> Moosic</h1>
-    </div>
-  )
+    return (
+        <div className = "background">
+            <div className="Title">
+                <h1 style={{ textAlign: "center" }}> Moosic</h1>
+            </div>
+        </div>
+    )
 }
 
-export default Home
+export default Home;

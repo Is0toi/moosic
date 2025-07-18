@@ -15,8 +15,6 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/Moosic" element={<Music />} />
         </Routes>
-
-
       </div>
     </Router>
   );

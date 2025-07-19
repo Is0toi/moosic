@@ -6,7 +6,9 @@ import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 function App() {
+
   const [isDark, setIsDark] = useState(false);
+  
   return (
     <Router>
       <div className={isDark ? "dark" : "light"}>

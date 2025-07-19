@@ -1,18 +1,26 @@
-Header {
+.navbar {
     /* background:#FDF5AA; */
     /* box-shadow: 0 0 5px rgba(0, 0, 0, 0.5); */
-    color: #34699A;
-    font-size: 2em;
+    position:fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px 10%;
+    background:transparent;
+    display:flex;
+    align-items:center;
+    z-index:100;
+
 }
 
-.NavBar {
+/* .navbar {
     width: 100%;
     margin: 0 auto;
     padding: 1rem;
     text-align: right;
-}
+} */
 
-.NavBar nav {
+.navbar nav {
     display: flex;
     justify-content: flex-end;
     align-items: center;
@@ -22,13 +30,13 @@ Header {
     justify-content: space-between; */
 }
 
-.NavBar .nav-link li {
+.navbar .nav-link li {
     list-style: none;
     margin: 0 0.5rem;
     /* Not list format */
 }
 
-.NavBar .nav-link {
+.navbar .nav-link {
     display: flex;
     margin:0;
     padding:0;
@@ -36,7 +44,7 @@ Header {
     /* Will be flexible to the screen */
 }
 
-.NavBar ul li a {
+.navbar ul li a {
     color: #34699A;
     font-size: 1.3rem;
     padding: 0.7rem 1rem;
@@ -46,9 +54,24 @@ Header {
     text-align: right;
 }
 
-.NavBar ul li a:hover{
+.navbar ul li a:hover{
     background-color:#58A0C8;
 }
+
+/* .NavBar a::before{
+    content:'';
+    position: asbolute;
+    top: 100%;
+    left: 0;
+    width:0;
+    height:2px;
+    background: white;
+    transition: 0.3s;
+}
+
+.NavBar a:hover::before{
+    width:100%
+} */
 
 .hamburger{
     font-size:1.5rem;
@@ -64,7 +87,7 @@ Header {
         padding:40px;
     }
 
-    .NavBar .nav-link{
+    .navbar .nav-link{
     flex-direction: column;
     justify-content:space-evenly;
     background-color: #fff;

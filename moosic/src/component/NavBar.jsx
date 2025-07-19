@@ -11,8 +11,8 @@ function NavBar({ isDark, setIsDark }) {
         setIsOpen(!isOpen);
     };
     return <>
-        <header className="NavBar">
-            <nav>
+        <header className="header">
+            <nav className = "navbar">
                 <ul className={isOpen ? "nav-link active" : "nav-link"}>
                     <li><Link to="/"> Home</Link></li>
                     <li><Link to="/music"> Music</Link></li>

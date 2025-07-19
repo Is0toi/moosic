@@ -11,27 +11,55 @@ function NavBar({ isDark, setIsDark }) {
         setIsOpen(!isOpen);
     };
 
+    const [scrollData, setScrollData] = useState({
+        y: 0,
+        lastY: 0
+    })
+
+    const [isHidden, setIsHidden] = useState(false);
+
     useEffect(() => {
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('show');
-                } else {
-                    entry.target.classList.remove('show');
+        const handleScroll = () => {
+            setScrollData(prevState => {
+                const currentY = window.scrollY;
+                const goingDown = currentY > prevState.y;
+                const goingUp = currentY < prevState.y;
+                const scrolledEnough = currentY > 70;
+
+                setIsHidden(goingDown && scrolledEnough);
+                return {
+                    y: currentY,
+                    lastY: prevState.y
                 }
-            });
-        });
+            })
+        }
 
-        const hiddenElements = document.querySelectorAll('.hidden');
-        hiddenElements.forEach((el) => observer.observe(el));
+        window.addEventListener('scroll', handleScroll);
 
-        return () => {
-            hiddenElements.forEach((el) => observer.unobserve(el));
-        };
-    }, []);
+        return () => window.removeEventListener('scroll', handleScroll);
+
+    }, [])
+    // useEffect(() => {
+    //     const observer = new IntersectionObserver((entries) => {
+    //         entries.forEach((entry) => {
+    //             if (entry.isIntersecting) {
+    //                 entry.target.classList.add('show');
+    //             } else {
+    //                 entry.target.classList.remove('show');
+    //             }
+    //         });
+    //     });
+
+    //     const hiddenElements = document.querySelectorAll('.hidden');
+    //     hiddenElements.forEach((el) => observer.observe(el));
+
+    //     return () => {
+    //         hiddenElements.forEach((el) => observer.unobserve(el));
+    //     };
+    // }, []);
 
     return <>
-        <header className="header">
+        <header className={`header ${isHidden ? 'hideNav' : ''}`}>
             <nav className="navbar">
                 <ul className={isOpen ? "nav-link active" : "nav-link"}>
                     <li><Link to="/"> Home</Link></li>

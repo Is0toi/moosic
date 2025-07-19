@@ -1,5 +1,7 @@
 /* https://colorhunt.co/palette/113f6734699a58a0c8fdf5aa */
 /* https://youtu.be/T33NN_pPeNI?si=eUZLlTqcNeRejB3i*/
+/* https://www.w3schools.com/cssref/func_cubic-bezier.php */
+/* https://www.w3schools.com/cssref/tryit.php?filename=trycss3_transition-timing-function2 */
 
 * {
     margin: 0;
@@ -100,6 +102,7 @@ section{
 
 .home-title{
     font-size:5em;
+    color:#565656;
 }
 
 .description{

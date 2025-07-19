@@ -28,7 +28,7 @@ function Home() {
 
                 
             </section>
-            <section className = "hidden">
+            <section style = {{background:'white'}}className = "hidden">
                 <p>hiiiiii</p>
             </section>
         </div>

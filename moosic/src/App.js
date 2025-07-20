@@ -15,7 +15,7 @@ function App() {
         <NavBar isDark={isDark} setIsDark={setIsDark} />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/Moosic" element={<Music />} />
+          <Route path="/music" element={<Music />} />
         </Routes>
       </div>
     </Router>

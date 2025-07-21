@@ -52,27 +52,24 @@ function Music() {
 
     return (
 
-        <div className="music" >
-            <div className="start">
-                <h1 >Let's get started</h1>
-            </div>
-            <div className="next">
-                {showInput && !submittedUsername && (
-                    <UsernameInput onSubmit={handleUsernameSubmit} />
-                )}
-            </div>
-
-            {submittedUsername && (
+        <div className="music">
+            {!submittedUsername ? (
+                <div className="start">
+                    <h1>Let's get started</h1>
+                    <div className="next">
+                        {showInput && <UsernameInput onSubmit={handleUsernameSubmit} />}
+                    </div>
+                </div>
+            ) : (
                 <div className="next">
                     <div className="start">
-                        <h2> Welcome, {submittedUsername}</h2>
-                        <p> We're glad to have you</p>
+                        <h2>Welcome, {submittedUsername}</h2>
+                        <p>We're glad to have you</p>
                     </div>
                 </div>
             )}
-            {/* <input type="file" /> This can be used so that the user can input a song instead of me paying for an api... */}
         </div>
-    )
+    );
 }
 
 export default Music;

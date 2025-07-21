@@ -54,12 +54,14 @@ function Music() {
 
         <div className="music">
             {!submittedUsername ? (
-                <div className="start">
-                    <h1>Let's get started</h1>
+                <>
+                    <div className="start">
+                        <h1>Let's get started</h1>
+                    </div>
                     <div className="next">
                         {showInput && <UsernameInput onSubmit={handleUsernameSubmit} />}
                     </div>
-                </div>
+                </>
             ) : (
                 <div className="next">
                     <div className="start">

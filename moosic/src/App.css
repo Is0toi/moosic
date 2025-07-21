@@ -135,5 +135,29 @@ section {
 .userName{
     text-align:center;
     margin:50px auto;
+    color: black;
+    font-size: 3em;
+}
 
+.username-text{
+    width:300px;
+    height: 40px;
+    margin: 10px 0; 
+    font-size:19px;
+    border-radius:10px;
+}
+
+.username-text:focus {
+    border-color: #113f67;  
+    box-shadow: 0 0 5px rgba(52, 105, 154, 0.5);
+    /* BLUE BORDERRRR */
+}
+
+.submit-button{
+    width:150px;
+    height: 45px;
+    font-size: 18px; 
+    border-radius: 10px;
+    border:none;
+    color:#ff3b3f
 }

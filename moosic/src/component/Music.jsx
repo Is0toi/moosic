@@ -37,18 +37,18 @@ function Music() {
 
     const handleUsernameSubmit = (username) => {
         setSubmittedUsername(username);
-        localStorage.setItem("username", username);
+        // localStorage.setItem("username", username);
 
         // Will be saved now REMOVED FOR NOW 
     };
 
-    useEffect(() => {
-        const savedUsername = localStorage.getItem("username");
-        if (savedUsername) {
-            setSubmittedUsername(savedUsername);
-            setShowInput(false);
-        }
-    }, []);
+    // useEffect(() => {
+    //      const savedUsername = localStorage.getItem("username");
+    //     if (savedUsername) {
+    //         setSubmittedUsername(savedUsername);
+    //         setShowInput(false);
+    //     }
+    // }, []);
 
     return (
 

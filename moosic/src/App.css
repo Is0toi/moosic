@@ -28,8 +28,17 @@ section {
     align-content: center;
     min-height: 150vh;
     margin-bottom: 200px;
-
 }
+
+.next{
+    place-items: center;
+    align-content: center;
+    margin-bottom: 60px;
+    width:100%;
+    text-align:center;
+    transition:all 1s
+}
+
 
 .hidden {
     opacity: 0;
@@ -42,7 +51,6 @@ section {
 }
 
 .show {
-
     opacity: 1;
     filter: blur(0);
     transform: translateX(0);
@@ -71,12 +79,58 @@ section {
     text-align: center;
 }
 
-.join{
-    font-size:3em;
+.join {
+    font-size: 3em;
     margin-top: 20px;
-    padding:10px;
-    border-radius:5px;
-    color:#ff3b3f;
-    background:#EFEFEF;
-    border-color:#a9a9a9;
+    padding: 10px;
+    border-radius: 5px;
+    color: #ff3b3f;
+    background: #EFEFEF;
+    border-color: #a9a9a9;
+}
+
+
+@keyframes slideInOut {
+    0% {
+        opacity: 0;
+        transform: translateX(-100%);
+    }
+
+    10% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    90% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+}
+
+.start {
+    color: #565656;
+    font-size: 5em;
+    animation: slideInOut 3s ease-in-out forwards;
+    text-align:center;
+
+    /* NICE this makes it so that it doesn't stay on the screen the whole time */
+}
+
+.music{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.userName{
+    text-align:center;
+    margin:50px auto;
+
 }

@@ -1,7 +1,10 @@
 import React, {useEffect} from 'react';
 import { Link } from 'react-router-dom';
 
+
 function Home() {
+
+
     useEffect(() => {
         const observer = new IntersectionObserver((entries) => {
             entries.forEach((entry) => {

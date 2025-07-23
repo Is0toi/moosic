@@ -25,24 +25,25 @@ export default function FileUpload({ audioUrl, onSubmit }) {
 
 
   const handleSubmitRegion = () => {
-    if (!currentRegion) {
-      alert("Please create or select a region first");
-      return;
+    if (currentRegion) {
+      setSubmittedRegion({
+        start: currentRegion.start,
+        end: currentRegion.end,
+        duration: currentRegion.end - currentRegion.start,
+      });
+      setHasSubmitted(true);
+
+      // Remove any previous listeners to avoid duplicates
+      wavesurferRef.current.un('audioprocess');
+
+      // Add new stop listener
+      wavesurferRef.current.on('audioprocess', () => {
+        const currentTime = wavesurferRef.current.getCurrentTime();
+        if (!isLooping && currentTime >= currentRegion.end) {
+          wavesurferRef.current.pause();
+        }
+      });
     }
-
-    const regionData = {
-      start: currentRegion.start,
-      end: currentRegion.end,
-      duration: currentRegion.end - currentRegion.start
-    };
-
-    setSubmittedRegion(regionData);
-    setHasSubmitted(true);
-    onSubmit({
-      song: songName,
-      artist: artistName,
-      region: regionData,
-    });
   };
   // const handleSubmitSong = () => {
   //   if (songName.trim()) {

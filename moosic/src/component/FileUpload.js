@@ -1,6 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react'
-import WaveSurfer from "wavesurfer.js"
-import { BsSkipBackward, BsSkipForward, BsFillStopFill, BsFillPlayFill } from "react-icons/bs";
+import React, { useEffect, useRef, useState } from 'react';
+import WaveSurfer from 'wavesurfer.js';
+import RegionsPlugin from 'wavesurfer.js/dist/plugins/regions';
+import {
+  BsSkipBackward,
+  BsSkipForward,
+  BsFillStopFill,
+  BsFillPlayFill
+} from 'react-icons/bs';
 
 export default function FileUpload({ audioUrl }) {
   const waveformRef = useRef(null);
@@ -13,20 +19,35 @@ export default function FileUpload({ audioUrl }) {
 
     const urlToUse = audioUrl || audio;
 
+    // Create WaveSurfer instance
     wavesurferRef.current = WaveSurfer.create({
       container: waveformRef.current,
-      waveColor: "black",
-      progressColor: "white",
+      waveColor: 'black',
+      progressColor: 'white',
       url: urlToUse,
       dragToSeek: true,
-      height: 60,
+      height: 100,
       hideScrollBar: true,
       normalize: true,
-      barGap: 1,
-      barHeight: 20,
-      barRadius: 20,
-      barWidth: 5
+      barWidth: 3,
+      splitChannels: false,
+      plugins: [
+        RegionsPlugin.create({
+          dragSelection: true,
+        })
+      ]
     });
+
+    // Add region when waveform is ready
+   wavesurferRef.current.on('ready', () => {
+  console.log('WaveSurfer is ready');
+  console.log('Duration:', wavesurferRef.current.getDuration());
+  wavesurferRef.current.addRegion({
+    start: 2,
+    end: 6,
+    color: 'rgba(0, 123, 255, 0.3)',
+  });
+});
 
     return () => {
       wavesurferRef.current?.destroy();
@@ -56,7 +77,6 @@ export default function FileUpload({ audioUrl }) {
       setAudio(URL.createObjectURL(file));
     }
   };
-
   return (
     <div className="container">
       <div className="upload">
@@ -76,6 +96,7 @@ export default function FileUpload({ audioUrl }) {
 
       <button onClick={handleSkipBack}>
         <BsSkipBackward />
+        <p>-5s</p>
       </button>
       <button onClick={handlePlayPause}>
         <BsFillPlayFill />
@@ -85,6 +106,7 @@ export default function FileUpload({ audioUrl }) {
       </button>
       <button onClick={handleSkipForward}>
         <BsSkipForward />
+        <p>+5s</p>
       </button>
     </div>
   );

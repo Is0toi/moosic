@@ -1,53 +1,139 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import WaveSurfer from 'wavesurfer.js'
+import React, { useState, useEffect, useRef } from 'react';
+import WaveSurfer from 'wavesurfer.js';
+import RegionsPlugin from 'wavesurfer.js/dist/plugins/regions.esm.js';
 
 function Upload() {
     const [selectedFile, setSelectedFile] = useState(null);
     const [uploadProgress, setUploadProgress] = useState(0);
-    // For progress bar
     const [uploadStatus, setUploadStatus] = useState('');
+    const [loop, setLoop] = useState(true);
+    const waveformRef = useRef(null);
+    const wavesurferRef = useRef(null);
+    const regionsRef = useRef(null);
+    const activeRegionRef = useRef(null);
 
     const handleFileChange = (e) => {
-        setSelectedFile(e.target.files[0]);
-        setUploadStatus('');
+        if (e.target.files?.[0]) {
+            setSelectedFile(e.target.files[0]);
+            setUploadStatus('');
+        }
     };
 
-    function AudioURL() {
-        const urlObj = URL.createObjectURL(selectedFile);
-        var audio = new Audio(urlObj);
-        return (urlObj);
-    }
     const handleUpload = async () => {
         if (!selectedFile) {
             setUploadStatus('Select a music file');
             return;
         }
-        const wavesurfer = WaveSurfer.create({
-            container: document.body,
-            waveColor: 'rgb(200, 0, 200)',
+    };
+
+    useEffect(() => {
+        if (!selectedFile || !waveformRef.current) {
+            return;
+        }
+
+        if (wavesurferRef.current) {
+            wavesurferRef.current.destroy();
+            regionsRef.current = null;
+        }
+
+        //This is the waveee
+        const ws = WaveSurfer.create({
+            container: waveformRef.current,
+            waveColor: '#ff3b3f',
             progressColor: 'rgb(100, 0, 100)',
-            url: AudioURL(),
-        })
+            url: URL.createObjectURL(selectedFile),
+        });
 
-        wavesurfer.on('click', () => {
-            wavesurfer.play()
-        })
+        // Plugin for region sections
+        const regions = RegionsPlugin.create();
+        ws.registerPlugin(regions);
+        regionsRef.current = regions;
+        wavesurferRef.current = ws;
 
+        ws.on('ready', () => {
+            regions.addRegion({
+                start: 0,
+                end: Math.min(8, ws.getDuration()),
+                content: 'Resize me',
+                color: '#caebf2',
+                drag: false,
+                resize: true,
+            });
 
-    }
+            //drag
+            regions.enableDragSelection({
+                color: 'rgba(255, 0, 0, 0.1)',
+            });
+        });
 
+        let activeRegion = null;
+        regions.on('region-in', (region) => {
+            activeRegionRef.current = region;
+        });
+
+        regions.on('region-out', (region) => {
+            if (activeRegionRef.current === region && loop) {
+                region.play();
+            }
+        });
+
+        regions.on('region-clicked', (region, e) => {
+            e.stopPropagation();
+            activeRegionRef.current = region;
+            region.play();
+            region.setOptions({ color: '#caebf2' });
+        });
+
+        return () => {
+            ws.destroy();
+            URL.revokeObjectURL(ws.getUrl());
+        };
+    }, [selectedFile]);
+
+    useEffect(() => {
+        if (!regionsRef.current) return;
+
+        
+        const regions = regionsRef.current;
+        const originalOutHandler = regions.handlers['region-out'];
+
+        regions.un('region-out', originalOutHandler);
+
+        regions.on('region-out', (region) => {
+            if (activeRegionRef.current === region && loop) {
+                region.play();
+            }
+        });
+
+    }, [loop]);
 
     return (
         <>
-            <div>
-                <h1> File Uploaded</h1>
-                <label className="file-label"> Choose File</label>
-                <input type="file" onChange={handleFileChange} className="file-input" />
+            <div className="upload">
+                <h1>Upload a music file of a song playing in your head today!</h1>
+                <label className="file-label">Choose File: </label>
+                <input
+                    type="file"
+                    onChange={handleFileChange}
+                    className="file-input"
+                    accept="audio/*"
+                />
 
-                {selectedFile && (
-                    <p>Selected: {selectedFile.name}</p>
-                )}
+                {selectedFile && <p>Selected: {selectedFile.name}</p>}
+            </div>
+
+            {/* Waveform container */}
+            <div ref={waveformRef} style={{ margin: '20px 0' }}></div>
+
+            <div style={{ margin: '10px 0' }}>
+                <label>
+                    <input
+                        type="checkbox"
+                        checked={loop}
+                        onChange={(e) => setLoop(e.target.checked)}
+                    />
+                    Loop regions
+                </label>
             </div>
 
             <button onClick={handleUpload} className="upload-button">
@@ -55,18 +141,12 @@ function Upload() {
             </button>
 
             {uploadProgress > 0 && uploadProgress < 100 && (
-                <div>
-                    <div className="progress" style={{ width: `${uploadProgress}%` }}>
-                        {/* This is the bar */}
-
-                    </div>
-                </div>
+                <div className="progress" style={{ width: `${uploadProgress}%` }}></div>
             )}
 
-            {uploadStatus && <p> {uploadStatus}</p>
-            }
+            {uploadStatus && <p>{uploadStatus}</p>}
         </>
     );
 }
 
-export default Upload
+export default Upload;

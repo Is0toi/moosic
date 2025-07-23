@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Upload from './Upload';
-
+import FileUpload from './FileUpload'
 
 function Music() {
     console.log("Music component rendered");
@@ -37,18 +37,8 @@ function Music() {
 
     const handleUsernameSubmit = (username) => {
         setSubmittedUsername(username);
-        // localStorage.setItem("username", username);
-
-        // Will be saved now REMOVED FOR NOW 
     };
 
-    // useEffect(() => {
-    //      const savedUsername = localStorage.getItem("username");
-    //     if (savedUsername) {
-    //         setSubmittedUsername(savedUsername);
-    //         setShowInput(false);
-    //     }
-    // }, []);
 
     return (
 
@@ -68,7 +58,7 @@ function Music() {
                         <h2>Welcome, {submittedUsername}</h2>
                         <p>We're glad to have you</p>
                     </div>
-                        <input></input>
+                     <FileUpload/>
                     <div>
 
                     </div>

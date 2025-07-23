@@ -212,27 +212,39 @@ export default function FileUpload({ audioUrl, onSubmit }) {
             )}
           </div>
         </>
-      ) : (
-        submittedRegion && (
-          <div
-            className="submitted-card"
-            style={{
-              border: '2px solid #444',
-              borderRadius: '12px',
-              padding: '1rem 1.5rem',
-              backgroundColor: '#f4f4f4',
-              maxWidth: '400px',
-              margin: '2rem auto',
-              textAlign: 'center',
-            }}
-          >
+      ) : submittedRegion ? (
+        <div
+          className="submitted-card"
+          style={{
+            border: '2px solid #444',
+            borderRadius: '12px',
+            padding: '1rem 1.5rem',
+            backgroundColor: '#f4f4f4',
+            maxWidth: '400px',
+            margin: '2rem auto',
+            textAlign: 'center',
+          }}
+        >
+          <div className="final-card">
             <h2>{songName} by {artistName}</h2>
             <p><strong>Start:</strong> {submittedRegion.start.toFixed(2)} seconds</p>
             <p><strong>End:</strong> {submittedRegion.end.toFixed(2)} seconds</p>
             <p><strong>Duration:</strong> {submittedRegion.duration.toFixed(2)} seconds</p>
+
+            <button
+              onClick={() => {
+                if (wavesurferRef.current) {
+                  wavesurferRef.current.stop();
+                  wavesurferRef.current.setTime(submittedRegion.start);
+                  wavesurferRef.current.play();
+                }
+              }}
+            >
+              Play
+            </button>
           </div>
-        )
-      )}
+        </div>
+      ) : null}
     </div>
   );
 

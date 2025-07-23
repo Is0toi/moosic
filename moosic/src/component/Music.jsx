@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import FileUpload from './FileUpload';
-import Input from'./Input';
+import Input from './Input';
 
 function Music() {
     console.log("Music component rendered");

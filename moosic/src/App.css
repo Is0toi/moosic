@@ -166,3 +166,7 @@ section {
   background-color: rgba(0, 123, 255, 0.3) !important;
   z-index: 5 !important;
 }
+
+.upload{
+    color: black;
+}

@@ -6,93 +6,113 @@ import {
   BsSkipForward,
   BsFillStopFill,
   BsFillPlayFill,
-  BsTrash,
-  BsArrowRepeat
+  BsArrowRepeat,
 } from 'react-icons/bs';
 
 export default function FileUpload({ audioUrl }) {
   const waveformRef = useRef(null);
   const wavesurferRef = useRef(null);
-  const regionsRef = useRef(null);
+  const regionsPluginRef = useRef(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentRegion, setCurrentRegion] = useState(null);
+  const [isLooping, setIsLooping] = useState(false);
 
   useEffect(() => {
     if (!audioUrl && !selectedFile) return;
 
     const urlToUse = audioUrl || URL.createObjectURL(selectedFile);
 
-    // Initialize WaveSurfer with Regions plugin
-    wavesurferRef.current = WaveSurfer.create({
+    // Initialize WaveSurfer
+    const wavesurfer = WaveSurfer.create({
       container: waveformRef.current,
       waveColor: 'rgba(100, 100, 255, 0.5)',
       progressColor: 'rgba(70, 70, 255, 0.8)',
-      url: urlToUse,
-      dragToSeek: true,
       height: 100,
       barWidth: 2,
-      plugins: [
-        RegionsPlugin.create({
-          dragSelection: true, // Enable drag-to-create regions
-        })
-      ]
+      dragToSeek: true,
     });
 
-    regionsRef.current = wavesurferRef.current.registerPlugin(RegionsPlugin.create());
+    wavesurferRef.current = wavesurfer;
 
-    // Handle region events
-    wavesurferRef.current.on('ready', () => {
+    // Initialize Regions plugin
+    const regions = wavesurfer.registerPlugin(
+      RegionsPlugin.create({
+        dragSelection: {
+          slop: 5,
+        },
+      })
+    );
+    regionsPluginRef.current = regions;
+
+    // When audio is ready
+    wavesurfer.on('ready', () => {
       console.log('WaveSurfer ready!');
-
-      // Example: Add a default region (optional)
-      regionsRef.current.addRegion({
+      // Create a default region
+      const defaultRegion = regions.addRegion({
         start: 0,
         end: 5,
-        color: 'rgba(0, 123, 255, 0.3)',
+        color: 'rgba(255, 0, 0, 0.3)',
         drag: true,
         resize: true,
       });
+      setCurrentRegion(defaultRegion);
     });
 
-    wavesurferRef.current.on('region-created', (region) => {
+    // Region events
+    regions.on('region-created', (region) => {
       console.log('Region created:', region);
       setCurrentRegion(region);
     });
 
-    wavesurferRef.current.on('region-clicked', (region, e) => {
+    regions.on('region-clicked', (region, e) => {
       e.stopPropagation();
       region.play();
     });
 
-    wavesurferRef.current.on('play', () => setIsPlaying(true));
-    wavesurferRef.current.on('pause', () => setIsPlaying(false));
-    wavesurferRef.current.on('finish', () => setIsPlaying(false));
+    regions.on('region-updated', (region) => {
+      setCurrentRegion(region);
+    });
 
-    return () => wavesurferRef.current?.destroy();
+    // Playback events
+    wavesurfer.on('timeupdate', (time) => {
+      if (currentRegion && isLooping && time >= currentRegion.end) {
+        wavesurfer.setTime(currentRegion.start);
+        wavesurfer.play();
+      }
+    });
+
+    wavesurfer.on('play', () => setIsPlaying(true));
+    wavesurfer.on('pause', () => setIsPlaying(false));
+    wavesurfer.on('finish', () => setIsPlaying(false));
+
+    wavesurfer.load(urlToUse);
+
+    return () => {
+      wavesurfer.destroy();
+    };
   }, [audioUrl, selectedFile]);
 
-  // Play/Pause toggle
   const handlePlayPause = () => {
-    wavesurferRef.current?.playPause();
-  };
+    if (!wavesurferRef.current) return;
 
-  // Play the selected region
-  const playRegion = () => {
-    if (currentRegion) {
-      currentRegion.play();
+    if (wavesurferRef.current.isPlaying()) {
+      wavesurferRef.current.pause();
     } else {
-      wavesurferRef.current?.play();
+      playRegion();
     }
   };
 
+  const playRegion = () => {
+    if (!wavesurferRef.current || !currentRegion) return;
 
+    wavesurferRef.current.stop();
+    wavesurferRef.current.setTime(currentRegion.start);
+    wavesurferRef.current.play();
+  };
 
-  // Loop the selected region
   const toggleLoop = () => {
-    if (currentRegion) {
-      currentRegion.setOptions({ loop: !currentRegion.loop });
-    }
+    setIsLooping(!isLooping);
   };
 
   return (
@@ -106,13 +126,13 @@ export default function FileUpload({ audioUrl }) {
         />
       </div>
 
-      <div ref={waveformRef} />
+      <div ref={waveformRef} style={{ width: '100%', height: '100px' }} />
 
       <div className="controls">
         <button onClick={() => wavesurferRef.current?.skip(-5)}>
           <BsSkipBackward /> -5s
         </button>
-        <button onClick={playRegion}>
+        <button onClick={handlePlayPause}>
           <BsFillPlayFill /> {isPlaying ? 'Pause' : 'Play'}
         </button>
         <button onClick={() => wavesurferRef.current?.stop()}>
@@ -121,13 +141,16 @@ export default function FileUpload({ audioUrl }) {
         <button onClick={() => wavesurferRef.current?.skip(5)}>
           <BsSkipForward /> +5s
         </button>
-      </div>
-
-      <div className="region-controls">
-        <button onClick={toggleLoop} disabled={!currentRegion}>
-          <BsArrowRepeat /> {currentRegion?.loop ? 'Disable Loop' : 'Loop Region'}
+        <button onClick={toggleLoop}>
+          <BsArrowRepeat /> {isLooping ? 'Looping' : 'Loop'}
         </button>
       </div>
+
+      {currentRegion && (
+        <div className="region-info">
+          Current Region: {currentRegion.start.toFixed(1)}s - {currentRegion.end.toFixed(1)}s
+        </div>
+      )}
     </div>
   );
 }

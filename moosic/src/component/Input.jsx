@@ -18,7 +18,7 @@ function Input({ onSubmit }) {
         <div className="userName">
             <p>What is your username?</p>
             <label>Username: </label>
-            <input className="username-text" value = {username} onChange = {handleChange}></input>
+            <input className="username-text" value={username} onChange={handleChange}></input>
             <button className="submit-button" onClick={handleSubmit}>Submit</button>
         </div>
     )

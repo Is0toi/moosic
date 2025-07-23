@@ -9,7 +9,7 @@ import {
   BsArrowRepeat,
 } from 'react-icons/bs';
 
-export default function FileUpload({ audioUrl }) {
+export default function FileUpload({ audioUrl, onSubmit }) {
   const waveformRef = useRef(null);
   const wavesurferRef = useRef(null);
   const regionsPluginRef = useRef(null);
@@ -18,6 +18,11 @@ export default function FileUpload({ audioUrl }) {
   const [currentRegion, setCurrentRegion] = useState(null);
   const [isLooping, setIsLooping] = useState(false);
   const [submittedRegion, setSubmittedRegion] = useState(null);
+  const [hasSubmitted, setHasSubmitted] = useState(false);
+  const [songName, setSongName] = useState("");
+  const [artistName, setArtistName] = useState("");
+
+
 
   const handleSubmitRegion = () => {
     if (!currentRegion) {
@@ -32,8 +37,32 @@ export default function FileUpload({ audioUrl }) {
     };
 
     setSubmittedRegion(regionData);
-    console.log('Submitted region:', regionData);
+    setHasSubmitted(true);
+    onSubmit({
+      song: songName,
+      artist: artistName,
+      region: regionData,
+    });
   };
+  // const handleSubmitSong = () => {
+  //   if (songName.trim()) {
+  //     onSubmit(songName);
+  //   }
+  // };
+
+  // const handleChange = (e) => {
+  //   setSongName(e.target.value);
+  // }
+
+  // const handleSubmitArtists = () => {
+  //   if (artistName.trim()) {
+  //     onSubmit(artistName);
+  //   }
+  // };
+
+  // const handleChangeArtists = (e) => {
+  //   setArtistName(e.target.value);
+  // }
 
   useEffect(() => {
     if (!audioUrl && !selectedFile) return;
@@ -129,46 +158,82 @@ export default function FileUpload({ audioUrl }) {
 
   return (
     <div className="container">
-      <div className="upload">
-        <h1>Upload a music file of a song playing in your head today!</h1>
-        <input
-          type="file"
-          onChange={(e) => setSelectedFile(e.target.files[0])}
-          accept="audio/*"
-        />
-      </div>
+      {!hasSubmitted ? (
+        <>
+          <div className="upload">
+            <h1>Upload a music file of a song playing in your head today!</h1>
+            <input
+              type="file"
+              onChange={(e) => setSelectedFile(e.target.files[0])}
+              accept="audio/*"
+            />
+          </div>
 
-      <div ref={waveformRef} style={{ width: '100%', height: '100px' }} />
+          <div ref={waveformRef} style={{ width: '100%', height: '100px' }} />
 
-      <div className="controls">
-        <button onClick={() => wavesurferRef.current?.skip(-5)}>
-          <BsSkipBackward /> -5s
-        </button>
-        <button onClick={handlePlayPause}>
-          <BsFillPlayFill /> {isPlaying ? 'Pause' : 'Play'}
-        </button>
-        <button onClick={() => wavesurferRef.current?.stop()}>
-          <BsFillStopFill /> Stop
-        </button>
-        <button onClick={() => wavesurferRef.current?.skip(5)}>
-          <BsSkipForward /> +5s
-        </button>
-        <button onClick={toggleLoop}>
-          <BsArrowRepeat /> {isLooping ? 'Looping' : 'Loop'}
-        </button>
-      </div>
+          <div className="controls">
+            <button onClick={() => wavesurferRef.current?.skip(-5)}>
+              <BsSkipBackward /> -5s
+            </button>
+            <button onClick={handlePlayPause}>
+              <BsFillPlayFill /> {isPlaying ? 'Pause' : 'Play'}
+            </button>
+            <button onClick={() => wavesurferRef.current?.stop()}>
+              <BsFillStopFill /> Stop
+            </button>
+            <button onClick={() => wavesurferRef.current?.skip(5)}>
+              <BsSkipForward /> +5s
+            </button>
+            <button onClick={toggleLoop}>
+              <BsArrowRepeat /> {isLooping ? 'Looping' : 'Loop'}
+            </button>
 
-      {currentRegion && (
-        <div className="region-info">
-          Current Region: {currentRegion.start.toFixed(1)}s - {currentRegion.end.toFixed(1)}s
-          <button onClick={handleSubmitRegion}>Submit</button>
-          {submittedRegion && (
-            <div>
-              Submitted Region: {submittedRegion.start.toFixed(2)}s to {submittedRegion.end.toFixed(2)}s
+            <div className="text-inputs">
+              <p>What's the song name?</p>
+              <input
+                className="song-name"
+                value={songName}
+                onChange={(e) => setSongName(e.target.value)}
+              />
+
+              <p>What's the artist's name?</p>
+              <input
+                className="artist-name"
+                value={artistName}
+                onChange={(e) => setArtistName(e.target.value)}
+              />
             </div>
-          )}
-        </div>
+
+            {currentRegion && (
+              <div className="region-info">
+                Current Region: {currentRegion.start.toFixed(1)}s - {currentRegion.end.toFixed(1)}s
+                <button onClick={handleSubmitRegion}>Submit</button>
+              </div>
+            )}
+          </div>
+        </>
+      ) : (
+        submittedRegion && (
+          <div
+            className="submitted-card"
+            style={{
+              border: '2px solid #444',
+              borderRadius: '12px',
+              padding: '1rem 1.5rem',
+              backgroundColor: '#f4f4f4',
+              maxWidth: '400px',
+              margin: '2rem auto',
+              textAlign: 'center',
+            }}
+          >
+            <h2>{songName} by {artistName}</h2>
+            <p><strong>Start:</strong> {submittedRegion.start.toFixed(2)} seconds</p>
+            <p><strong>End:</strong> {submittedRegion.end.toFixed(2)} seconds</p>
+            <p><strong>Duration:</strong> {submittedRegion.duration.toFixed(2)} seconds</p>
+          </div>
+        )
       )}
     </div>
   );
+
 }

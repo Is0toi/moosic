@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import FileUpload from './FileUpload';
+import Input from'./Input';
 
 function Music() {
     console.log("Music component rendered");
     const [showInput, setShowInput] = useState(false);
     const [submittedUsername, setSubmittedUsername] = useState("");
+    const [submittedData, setSubmittedData] = useState(null);
 
     useEffect(() => {
         const observer = new IntersectionObserver((entries) => {
@@ -29,8 +31,6 @@ function Music() {
         const timer = setTimeout(() => {
             setShowInput(true);
         }, 3000);
-        // 3 seconds of timeout
-
         return () => clearTimeout(timer);
     }, []);
 
@@ -38,9 +38,11 @@ function Music() {
         setSubmittedUsername(username);
     };
 
+    const handleRegionSubmit = (data) => {
+        setSubmittedData(data);
+    };
 
     return (
-
         <div className="music">
             {!submittedUsername ? (
                 <>
@@ -48,7 +50,9 @@ function Music() {
                         <h1>Let's get started</h1>
                     </div>
                     <div className="next">
-                        {showInput && <FileUpload onSubmit={handleUsernameSubmit} />}
+                        {showInput && (
+                            <Input onSubmit={handleUsernameSubmit} />
+                        )}
                     </div>
                 </>
             ) : (
@@ -57,10 +61,7 @@ function Music() {
                         <h2>Welcome, {submittedUsername}</h2>
                         <p>We're glad to have you</p>
                     </div>
-                     <FileUpload/>
-                    <div>
-
-                    </div>
+                    <FileUpload onSubmit={handleRegionSubmit} />
                 </div>
             )}
         </div>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import UsernameInput from './Input';
+import Upload from './Upload';
 
 
 function Music() {
@@ -59,7 +59,7 @@ function Music() {
                         <h1>Let's get started</h1>
                     </div>
                     <div className="next">
-                        {showInput && <UsernameInput onSubmit={handleUsernameSubmit} />}
+                        {showInput && <Upload onSubmit={handleUsernameSubmit} />}
                     </div>
                 </>
             ) : (
@@ -67,6 +67,10 @@ function Music() {
                     <div className="start">
                         <h2>Welcome, {submittedUsername}</h2>
                         <p>We're glad to have you</p>
+                    </div>
+                        <input></input>
+                    <div>
+
                     </div>
                 </div>
             )}

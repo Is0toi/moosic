@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import Upload from './Upload';
-import FileUpload from './FileUpload'
+import FileUpload from './FileUpload';
 
 function Music() {
     console.log("Music component rendered");
@@ -49,7 +48,7 @@ function Music() {
                         <h1>Let's get started</h1>
                     </div>
                     <div className="next">
-                        {showInput && <Upload onSubmit={handleUsernameSubmit} />}
+                        {showInput && <FileUpload onSubmit={handleUsernameSubmit} />}
                     </div>
                 </>
             ) : (

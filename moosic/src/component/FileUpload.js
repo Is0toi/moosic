@@ -17,13 +17,29 @@ export default function FileUpload({ audioUrl }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentRegion, setCurrentRegion] = useState(null);
   const [isLooping, setIsLooping] = useState(false);
+  const [submittedRegion, setSubmittedRegion] = useState(null);
+
+  const handleSubmitRegion = () => {
+    if (!currentRegion) {
+      alert("Please create or select a region first");
+      return;
+    }
+
+    const regionData = {
+      start: currentRegion.start,
+      end: currentRegion.end,
+      duration: currentRegion.end - currentRegion.start
+    };
+
+    setSubmittedRegion(regionData);
+    console.log('Submitted region:', regionData);
+  };
 
   useEffect(() => {
     if (!audioUrl && !selectedFile) return;
 
     const urlToUse = audioUrl || URL.createObjectURL(selectedFile);
 
-    // Initialize WaveSurfer
     const wavesurfer = WaveSurfer.create({
       container: waveformRef.current,
       waveColor: 'rgba(100, 100, 255, 0.5)',
@@ -35,7 +51,6 @@ export default function FileUpload({ audioUrl }) {
 
     wavesurferRef.current = wavesurfer;
 
-    // Initialize Regions plugin
     const regions = wavesurfer.registerPlugin(
       RegionsPlugin.create({
         dragSelection: {
@@ -45,10 +60,8 @@ export default function FileUpload({ audioUrl }) {
     );
     regionsPluginRef.current = regions;
 
-    // When audio is ready
     wavesurfer.on('ready', () => {
       console.log('WaveSurfer ready!');
-      // Create a default region
       const defaultRegion = regions.addRegion({
         start: 0,
         end: 5,
@@ -59,7 +72,6 @@ export default function FileUpload({ audioUrl }) {
       setCurrentRegion(defaultRegion);
     });
 
-    // Region events
     regions.on('region-created', (region) => {
       console.log('Region created:', region);
       setCurrentRegion(region);
@@ -67,6 +79,7 @@ export default function FileUpload({ audioUrl }) {
 
     regions.on('region-clicked', (region, e) => {
       e.stopPropagation();
+      setCurrentRegion(region);
       region.play();
     });
 
@@ -74,7 +87,6 @@ export default function FileUpload({ audioUrl }) {
       setCurrentRegion(region);
     });
 
-    // Playback events
     wavesurfer.on('timeupdate', (time) => {
       if (currentRegion && isLooping && time >= currentRegion.end) {
         wavesurfer.setTime(currentRegion.start);
@@ -149,6 +161,12 @@ export default function FileUpload({ audioUrl }) {
       {currentRegion && (
         <div className="region-info">
           Current Region: {currentRegion.start.toFixed(1)}s - {currentRegion.end.toFixed(1)}s
+          <button onClick={handleSubmitRegion}>Submit</button>
+          {submittedRegion && (
+            <div>
+              Submitted Region: {submittedRegion.start.toFixed(2)}s to {submittedRegion.end.toFixed(2)}s
+            </div>
+          )}
         </div>
       )}
     </div>
